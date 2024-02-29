@@ -65,20 +65,15 @@ export default function Home() {
 
     async function fileSave(uri: string, filename: string) {
         if (Platform.OS === "android") {
-          // Pega a pasta temporária.
           const directoryUri = FileSystem.cacheDirectory + filename
-    
-          // Lê o conteúdo do arquivo em formato base64
           const base64File = await FileSystem.readAsStringAsync(uri, {
             encoding: FileSystem.EncodingType.Base64,
           })
     
-          // Escreve o conteúdo do arquivo no diretório.
           await FileSystem.writeAsStringAsync(directoryUri, base64File, {
             encoding: FileSystem.EncodingType.Base64,
           })
     
-          // Abre o arquivo recém-criado
           await Sharing.shareAsync(directoryUri)
         } else {
           Sharing.shareAsync(uri)
