@@ -1,11 +1,14 @@
 import { Input } from '@/components/input'
 import { useState } from 'react'
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View, Modal, Platform } from 'react-native'
+import { ActivityIndicator, Alert, Text, TouchableOpacity, View, Modal, Platform, Linking } from 'react-native'
 import * as FileSystem from "expo-file-system"
 import * as Sharing from "expo-sharing"
+import * as IntentLauncher from 'expo-intent-launcher'
+import * as Updates from 'expo-updates'
 import axios from 'axios'
 
-const APK_NAME = "app.png"
+
+const APK_NAME = "app.apk"
 
 export default function Home() {
     const [isLoading, setIsLoading] = useState(false)
@@ -53,9 +56,10 @@ export default function Home() {
             const downloadResponse = await downloadResumable.downloadAsync()
 
             if (downloadResponse?.uri) {
-                await fileSave(downloadResponse.uri, APK_NAME)
+                // await fileSave(downloadResponse.uri, APK_NAME)
                 setProgressPercentage(0)
                 setIsDownloading(false)
+                // await openDownloadedApk(fileUri)
             }
         } catch (error) {
             Alert.alert("Download", "Não foi possível realizar o download.")
@@ -66,6 +70,7 @@ export default function Home() {
     async function fileSave(uri: string, filename: string) {
         if (Platform.OS === "android") {
           const directoryUri = FileSystem.cacheDirectory + filename
+
           const base64File = await FileSystem.readAsStringAsync(uri, {
             encoding: FileSystem.EncodingType.Base64,
           })
@@ -79,6 +84,22 @@ export default function Home() {
           Sharing.shareAsync(uri)
         }
       }
+
+      
+
+    //   async function openDownloadedApk(fileUri: string) {
+    //     if (Platform.OS === "android") {
+    //         // Verificar se o APK já foi baixado com sucesso
+    //         const apkExists = await FileSystem.getInfoAsync(fileUri);
+    //         if (apkExists.exists) {
+    //             await Linking.openURL(fileUri);
+    //         } else {
+    //             Alert.alert("Erro", "O APK não foi encontrado.");
+    //         }
+    //     } else {
+    //         Alert.alert("Erro", "Este recurso só é suportado em dispositivos Android.");
+    //     }
+    // }
 
     return (
         <View className='flex-1 bg-gray-900 justify-center items-center px-10'>
